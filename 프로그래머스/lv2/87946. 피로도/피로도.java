@@ -10,8 +10,7 @@ class Solution {
     }
 
     public void dfs(int k, int[][] dungeons, int cnt) {
-        if (cnt > maxCnt)
-            maxCnt = cnt;
+        maxCnt = Math.max(cnt, maxCnt);
         for (int i = 0; i < dungeons.length; i++) {
             int[] dungeon = dungeons[i];
             if (k < dungeon[0] || visited[i]) continue;
