@@ -1,34 +1,46 @@
+from collections import deque
 import sys
-import collections
+
 
 def bfs(start):
     cnt = 1
-    visited = [0 for _ in range(n+1)]
-    visited[start] = 1
-    queue = collections.deque([start])
-    while queue:
-        u = queue.popleft()
-        for v in g[u]:
-            if not visited[v]:
-                queue.append(v)
-                visited[v] = 1
+    visited = [False] * (N + 1)
+    visited[start] = True
+    Q = deque([start])
+    while Q:
+        node = Q.popleft()
+        for next_node in graph[node]:
+            if not visited[next_node]:
                 cnt += 1
+                visited[next_node] = True
+                Q.append(next_node)
+
     return cnt
 
-n, m = map(int, sys.stdin.readline().split())
-g = collections.defaultdict(list)
-for _ in range(m):
-    a, b = map(int, sys.stdin.readline().split())
-    g[b].append(a)
 
-results = []
+input = sys.stdin.readline
+
+N, M = map(int, input().split())
+graph = [[] for _ in range(N + 1)]
+
+for _ in range(M):
+    A, B = map(int, input().split())
+    graph[B].append(A)
+
+
 max_cnt = 0
-for i in range(1, n+1):
+answer = []
+for i in range(1, N + 1):
     cnt = bfs(i)
-    if cnt > max_cnt:
+    if max_cnt < cnt:
+        answer.clear()
+        answer.append(i)
         max_cnt = cnt
-    results.append([i, cnt])
+    elif max_cnt == cnt:
+        answer.append(i)
 
-for i, cnt in results:
-    if cnt == max_cnt:
-        print(i, end = ' ')
+answer.sort()
+for i in answer:
+    print(i, end=" ")
+
+
