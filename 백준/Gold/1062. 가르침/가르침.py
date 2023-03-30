@@ -1,54 +1,46 @@
 import sys
-input = sys.stdin.readline
+n, k = map(int, input().split())
+
+# k 가 5보다 작으면 어떤 언어도 배울 수 없음
+if k < 5:
+    print(0)
+    exit()
+# k 가 26이면 모든 언어를 배울 수 있음
+elif k == 26:
+    print(n)
+    exit()
+
+answer = 0
+words = [set(sys.stdin.readline().rstrip()) for _ in range(n)]
+learn = [0] * 26
+
+# 적어도 언어 하나는 배우기위해 a,c,i,n,t 는 무조건 배워야함
+for c in ('a', 'c', 'i', 'n', 't'):
+    learn[ord(c) - ord('a')] = 1
 
 
-def solution():
-    def dfs(index, depth):
-        nonlocal answer
+def dfs(idx, cnt):
+    global answer
 
-        if depth == K - 5:
-            answer = max(answer, count_words())
-            return
-
-        for i in range(index, 26):
-            if visited[i]:
-                continue
-            visited[i] = True
-            dfs(i, depth + 1)
-            visited[i] = False
-
-    def count_words():
-        cnt = 0
+    if cnt == k - 5:
+        readcnt = 0
         for word in words:
+            check = True
             for w in word:
-                if not visited[ord(w) - ord('a')]:
+                if not learn[ord(w) - ord('a')]:
+                    check = False
                     break
-            else:
-                cnt += 1
-        return cnt
-
-    N, K = map(int, input().rstrip().split())
-    if K < 5:
-        print(0)
-        return
-    if K == 26:
-        print(N)
+            if check:
+                readcnt += 1
+        answer = max(answer, readcnt)
         return
 
-    north_chars = set(['a', 'n', 't', 'i', 'c'])
-    words = [set(input().rstrip()) for _ in range(N)]
-    visited = [False] * 26
-    for c in north_chars:
-        visited[ord(c) - ord('a')] = True
-
-    for word in words:
-        for c in north_chars:
-            word.remove(c)
+    for i in range(idx, 26):
+        if not learn[i]:
+            learn[i] = True
+            dfs(i, cnt + 1)
+            learn[i] = False
 
 
-    answer = 0
-    dfs(0, 0)
-    print(answer)
-
-
-solution()
+dfs(0, 0)
+print(answer)
