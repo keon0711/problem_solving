@@ -7,23 +7,16 @@ def solution():
     dx = [1, -1, 0, 0]
     dy = [0, 0, 1, -1]
 
-    def bfs(x, y):
-        q = deque()
-        q.append((x, y))
-        graph[x][y] = 0
-
+    def dfs(x, y):
         cnt = 1
-        while q:
-            cur = q.popleft()
-            for i in range(4):
-                nx = cur[0] + dx[i]
-                ny = cur[1] + dy[i]
-                if 0 <= nx < N and 0 <= ny < N and graph[nx][ny]:
-                    graph[nx][ny] = 0
-                    q.append((nx, ny))
-                    cnt += 1
+        for i in range(4):
+            nx = x + dx[i]
+            ny = y + dy[i]
+            if 0 <= nx < N and 0 <= ny < N and graph[nx][ny]:
+                graph[nx][ny] = 0
+                cnt += dfs(nx, ny)
 
-        counts.append(cnt)
+        return cnt
 
 
 
@@ -39,7 +32,9 @@ def solution():
         for j in range(N):
             if graph[i][j]:
                 groups += 1
-                bfs(i, j)
+                graph[i][j] = 0
+                counts.append(dfs(i, j))
+
     counts.sort()
     print(groups)
     for c in counts:
