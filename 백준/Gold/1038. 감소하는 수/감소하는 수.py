@@ -1,17 +1,22 @@
 import sys
-from itertools import combinations
 input = sys.stdin.readline
 
 
 def solution():
-    N = int(input())
-
     answer = []
-    for i in range(1, 11):
-        for j in combinations(range(10), i):
-            num = sorted(j, reverse=True)
-            answer.append(int("".join(map(str, num))))
 
+    def dfs(num, index):
+        if index > 10:
+            return
+
+        answer.append(num)
+        for i in [x for x in range(10) if x < num % 10]:
+            next_num = num * 10 + i
+            dfs(next_num, index + 1)
+
+    N = int(input())
+    for i in range(10):
+        dfs(i, 0)
     answer.sort()
     print(answer[N] if N < len(answer) else -1)
 
