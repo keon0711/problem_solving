@@ -1,3 +1,6 @@
+import sys
+input = sys.stdin.readline
+
 def solution():
     N = int(input())
     days = [(0, 0)]
@@ -7,8 +10,6 @@ def solution():
     for i in range(1, N + 1):
         max_profit[i] = max(max_profit[i], max_profit[i -1])
         max_profit[i + days[i][0]] = max(max_profit[i + days[i][0]], days[i][1] + max_profit[i])
-
-
 
 
     print(max(max_profit[N + 1], max_profit[N]))
