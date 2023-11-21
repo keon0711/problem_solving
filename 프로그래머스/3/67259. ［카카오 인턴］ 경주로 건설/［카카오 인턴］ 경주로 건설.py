@@ -1,30 +1,41 @@
-import heapq
-import sys
+from collections import deque
 
+
+def calc_cost(cur_dir, nex_dir, cost):
+    if (cur_dir == 'R' or cur_dir == 'L') and (nex_dir == 'L' or nex_dir == 'R'):  
+        return cost + 100
+    if (cur_dir == 'D' or cur_dir == 'U') and (nex_dir == 'D' or nex_dir == 'U'):  
+        return cost + 100
+    if (cur_dir == 'R' or cur_dir == 'L') and (nex_dir == 'D' or nex_dir == 'U'):  
+        return cost + 600
+    if (cur_dir == 'D' or cur_dir == 'U') and (nex_dir == 'R' or nex_dir == 'L'):  
+        return cost + 600
+
+    
+def bfs(x, y, cost, direct):
+    queue = deque([(x, y, cost, direct)])
+    check = [[0 for _ in range(N)] for _ in range(N)]
+    check[x][y] = 1
+    while queue:
+        x, y, cost, cur_dir = queue.popleft()
+        if x == N-1 and y == N-1:
+            answer.append(cost)
+            continue
+        for i, j, d in (0, 1, 'R'), (1, 0, 'D'), (0, -1, 'L'), (-1, 0, 'U'):
+            new_x, new_y, new_cost = x+i, y+j, calc_cost(cur_dir, d, cost)
+            if new_x < 0 or new_y < 0 or new_x >= N or new_y >= N:
+                continue
+            if not new_board[new_x][new_y]:
+                if not check[new_x][new_y] or check[new_x][new_y] > new_cost:
+                    check[new_x][new_y] = new_cost
+                    queue.append((new_x, new_y, new_cost, d))
+    
 
 def solution(board):
+    global N, check, new_board, answer
     answer = []
-    directions = [(0, 1), (1, 0), (-1, 0), (0, -1)]
     N = len(board)
-    visited = [[[sys.maxsize] * 4 for _ in range(N)] for _ in range(N)]
-
-    Q = []
-    heapq.heappush(Q, (0, 0, 0, -1))
-    while Q:
-        cost, x, y, d = heapq.heappop(Q)
-        if x == y == (N - 1):
-            answer.append(cost)
-
-        for i in range(4):
-            nx = x + directions[i][0]
-            ny = y + directions[i][1]
-            n_cost = cost
-            if d == -1 or i == d:
-                n_cost += 100
-            else:
-                n_cost += 600
-            if 0 <= nx < N and 0 <= ny < N and board[nx][ny] == 0 and n_cost < visited[nx][ny][i]:
-                visited[nx][ny][i] = n_cost
-                heapq.heappush(Q, (n_cost, nx, ny, i))
-
+    new_board = [board[i][:] for i in range(N)]
+    bfs(0, 0, 0, 'R')
+    bfs(0, 0, 0, 'D')
     return min(answer)
