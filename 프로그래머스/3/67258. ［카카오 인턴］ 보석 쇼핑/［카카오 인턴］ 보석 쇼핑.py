@@ -4,17 +4,16 @@ from collections import defaultdict
 def solution(gems):
     answer = []
     counter = defaultdict(int)
-    s = set(gems)
+    size = len(set(gems))
 
     start = end = 0
     while end < len(gems):
         counter[gems[end]] += 1
-        s.discard(gems[end])
 
         while counter[gems[start]] > 1:
             counter[gems[start]] -= 1
             start += 1
-        if not s:
+        if len(counter) == size:
             answer.append((start + 1, end + 1))
         end += 1
 
