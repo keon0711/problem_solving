@@ -1,36 +1,27 @@
+from itertools import product
+
+def check(str1, str2):
+    if len(str1) != len(str2):
+        return False
+    for i in range(len(str1)):
+        if str1[i] == "*":
+            continue
+        if str1[i] != str2[i]:
+            return False
+    return True
+
 def solution(user_id, banned_id):
-    def dfs(depth, combinations):
-        if depth == l:
-            combinations.sort()
-            results.append(tuple(combinations))
-            return
+    answer = set()
+    result = [[] for i in range(len(banned_id))]
 
-        for next_id in mapped_id[depth]:
-            if next_id not in combinations:
-                tmp = combinations[:]
-                tmp.append(next_id)
-                dfs(depth + 1, tmp)
-
-    results = []
-    mapped_id = []
-
-    for b in banned_id:
-        candidates = []
-        l = len(b)
+    for i in range(len(banned_id)):
         for u in user_id:
-            if len(u) != l:
-                continue
+            if check(banned_id[i], u):
+                result[i].append(u)
 
-            for i in range(l):
-                if b[i] == '*':
-                    continue
-                if b[i] != u[i]:
-                    break
-            else:
-                candidates.append(u)
-        mapped_id.append(candidates)
+    result = list(product(*result))
+    for r in result:
+        if len(set(r)) == len(banned_id):
+            answer.add(tuple(sorted(set(r))))
 
-    l = len(mapped_id)
-    dfs(0, [])
-
-    return len(set(results))
+    return len(answer)
