@@ -1,38 +1,26 @@
 from collections import deque
 
 
-def bfs(a, b):
-    Q = deque()
-    Q.append((a, b, 0))
-    visited[a][b] = True
-    while Q:
-        x, y, dist = Q.popleft()
-        MAP[x][y] = dist
-        for dx, dy in ((0, 1), (0, -1), (1, 0), (-1, 0),):
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < N and 0 <= ny < M and MAP[nx][ny] and not visited[nx][ny]:
-                visited[nx][ny] = True
-                Q.append((nx, ny, dist + 1))
-
-
 N, M = map(int, input().split())
 MAP = [list(map(int, input().split())) for _ in range(N)]
-visited = [[False] * M for _ in range(N)]
+visited = [[-1] * M for _ in range(N)]
 
-flag = False
+Q = deque()
+
 for i in range(N):
     for j in range(M):
         if MAP[i][j] == 2:
-            bfs(i, j)
-            flag = True
-            break
-    if flag:
-        break
+            visited[i][j] = 0
+            Q.append((i, j))
+        elif MAP[i][j] == 0:
+            visited[i][j] = 0
 
-for i in range(N):
-    for j in range(M):
-        if not visited[i][j] and MAP[i][j] == 1:
-            MAP[i][j] = -1
+while Q:
+    x, y = Q.popleft()
+    for nx, ny in ((x, y + 1), (x, y - 1), (x + 1, y), (x - 1, y)):
+        if 0 <= nx < N and 0 <= ny < M and visited[nx][ny] == -1:
+            visited[nx][ny] = visited[x][y] + 1
+            Q.append((nx, ny))
 
-for x in MAP:
-    print(*x)
+for row in visited:
+    print(*row)
