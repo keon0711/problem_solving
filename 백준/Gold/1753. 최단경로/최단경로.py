@@ -16,8 +16,6 @@ heapq.heappush(Q, (0, K))
 dist[K] = 0
 while Q:
     cost, node = heapq.heappop(Q)
-    if dist[node] < cost:
-        continue
     for v, w in graph[node]:
         alt = cost + w
         if dist[v] > alt:
