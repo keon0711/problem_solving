@@ -1,41 +1,41 @@
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.List;
 
 class Solution {
     public int solution(int[][] board, int[] moves) {
-        List<List<Integer>> newBoard = new ArrayList<>();
-        Deque<Integer> stack = new ArrayDeque<>();
-
-        for (int i = 0; i < board.length; i++) {
-            newBoard.add(new ArrayList<>());
-        }
-
-        for (int i = board.length - 1; i >= 0; i--) {
-            for (int j = 0; j < board.length; j++) {
-                if (board[i][j] == 0) {
-                    continue;
-                }
-                newBoard.get(j).add(board[i][j]);
-            }
-        }
-
+        int n = board.length;
+        int[] tops = new int[n];
+        Deque<Integer> basket = new ArrayDeque<>();
         int count = 0;
+
+        // Initialize tops array
+        for (int i = 0; i < n; i++) {
+            tops[i] = getTopItem(board, i);
+        }
+
         for (int move : moves) {
-            List<Integer> line = newBoard.get(move - 1);
-            if (line.isEmpty()) {
-                continue;
-            }
+            int col = move - 1;
+            if (tops[col] == n) continue; // Empty column
+
+            int item = board[tops[col]++][col];
             
-            Integer item = line.remove(line.size() - 1);
-            if (item.equals(stack.peek())) {
-                stack.pop();
+            if (!basket.isEmpty() && basket.peek() == item) {
+                basket.pop();
                 count += 2;
             } else {
-                stack.push(item);
+                basket.push(item);
             }
         }
+
         return count;
+    }
+
+    private int getTopItem(int[][] board, int col) {
+        for (int i = 0; i < board.length; i++) {
+            if (board[i][col] != 0) {
+                return i;
+            }
+        }
+        return board.length;
     }
 }
