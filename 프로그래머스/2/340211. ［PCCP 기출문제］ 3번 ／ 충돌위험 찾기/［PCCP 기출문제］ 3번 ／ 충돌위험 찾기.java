@@ -2,61 +2,65 @@ import java.util.*;
 
 class Solution {
     public int solution(int[][] points, int[][] routes) {
-        int answer = 0;
+
         Map<Integer, List<Point>> timePositionMap = new HashMap<>();
-
-        // 각 로봇의 경로를 시간별로 맵에 저장
         for (int[] route : routes) {
-            int time = 1;
-            for (int i = 1; i < route.length; i++) {
-                int[] start = points[route[i - 1] - 1];
-                int[] end = points[route[i] - 1];
-                int currentX = start[0], currentY = start[1];
-                
-                while (currentX != end[0] || currentY != end[1]) {
-                    timePositionMap.computeIfAbsent(time, k -> new ArrayList<>())
-                                   .add(new Point(currentX, currentY));
-                    time++;
+            int time = 0;
+            for (int i = 0; i < route.length - 1; i++) {
+                int[] startPoint = points[route[i] - 1];
+                int[] endPoint = points[route[i + 1] - 1];
+                int curX = startPoint[0];
+                int curY = startPoint[1];
 
-                    if (currentX != end[0]) {
-                        currentX += Integer.compare(end[0], currentX);
-                    } else if (currentY != end[1]) {
-                        currentY += Integer.compare(end[1], currentY);
+                while (curX != endPoint[0] || curY != endPoint[1]) {
+                    timePositionMap.computeIfAbsent(time++, k -> new ArrayList<>())
+                        .add(new Point(curX, curY));
+
+                    if (curX != endPoint[0]) {
+                        curX += Integer.compare(endPoint[0], curX);
+                    } else if (curY != endPoint[1]) {
+                        curY += Integer.compare(endPoint[1], curY);
                     }
                 }
-                
-                // 마지막 포인트 추가
-                if (i == route.length - 1) {
+
+                if (i == route.length - 2) {
                     timePositionMap.computeIfAbsent(time, k -> new ArrayList<>())
-                                   .add(new Point(currentX, currentY));
+                        .add(new Point(curX, curY));
                 }
             }
+
         }
 
-        // 각 시간대별로 충돌 위험 계산
-        for (List<Point> positions : timePositionMap.values()) {
-            Map<Point, Integer> positionCount = new HashMap<>();
-            for (Point p : positions) {
-                positionCount.merge(p, 1, Integer::sum);
+        int count = 0;
+        for (List<Point> pointList : timePositionMap.values()) {
+            Map<Point, Integer> collisionCounter = new HashMap<>();
+            for (Point point : pointList) {
+                collisionCounter.merge(point, 1, Integer::sum);
             }
-            answer += positionCount.values().stream().filter(count -> count > 1).count();
+            count += collisionCounter.values().stream().filter(v -> v > 1).count();
         }
 
-        return answer;
+        return count;
     }
 
+
     static class Point {
-        int x, y;
-        
-        Point(int x, int y) {
+        int x;
+        int y;
+
+        public Point(int x, int y) {
             this.x = x;
             this.y = y;
         }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Point point = (Point) o;
             return x == point.x && y == point.y;
         }
