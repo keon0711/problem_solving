@@ -1,42 +1,32 @@
 import java.util.*;
+import java.util.stream.*;
 
 class Solution {
     public int solution(int[] picks, String[] minerals) {
-        int totalPicks = Arrays.stream(picks).sum();
-        int groupCount = Math.min((minerals.length + 4) / 5, totalPicks);
-        
-        List<int[]> mineralGroups = new ArrayList<>();
-        
-        for (int i = 0; i < groupCount; i++) {
-            int[] group = new int[3]; // diamond, iron, stone
-            for (int j = i * 5; j < Math.min((i + 1) * 5, minerals.length); j++) {
-                if (minerals[j].equals("diamond")) group[0]++;
-                else if (minerals[j].equals("iron")) group[1]++;
-                else group[2]++;
-            }
-            mineralGroups.add(group);
-        }
-        
-        mineralGroups.sort((a, b) -> (b[0] * 25 + b[1] * 5 + b[2]) - (a[0] * 25 + a[1] * 5 + a[2]));
-        
-        int fatigue = 0;
-        int pickIndex = 0;
-        
-        for (int[] group : mineralGroups) {
-            while (pickIndex < 3 && picks[pickIndex] == 0) pickIndex++;
-            if (pickIndex == 3) break;
-            
-            picks[pickIndex]--;
-            
-            if (pickIndex == 0) { // diamond pick
-                fatigue += group[0] + group[1] + group[2];
-            } else if (pickIndex == 1) { // iron pick
-                fatigue += group[0] * 5 + group[1] + group[2];
-            } else { // stone pick
-                fatigue += group[0] * 25 + group[1] * 5 + group[2];
-            }
-        }
-        
-        return fatigue;
+        int maxMinerals = Math.min(minerals.length, Arrays.stream(picks).sum() * 5);
+
+        List<int[]> groups = IntStream.range(0, maxMinerals)
+            .filter(i -> i % 5 == 0)
+            .mapToObj(i -> Arrays.copyOfRange(minerals, i, Math.min(i + 5, maxMinerals)))
+            .map(this::calculateGroupValue)
+            .sorted((a, b) -> Arrays.stream(b).sum() - Arrays.stream(a).sum())
+            .collect(Collectors.toList());
+
+        return groups.stream()
+            .mapToInt(group -> calculateFatigue(group, picks))
+            .sum();
+    }
+
+    private int[] calculateGroupValue(String[] minerals) {
+        return Arrays.stream(minerals)
+            .mapToInt(s -> s.charAt(0) == 'd' ? 25 : s.charAt(0) == 'i' ? 5 : 1)
+            .toArray();
+    }
+
+    private int calculateFatigue(int[] group, int[] picks) {
+        int pickPower = picks[0]-- > 0 ? 25 : picks[1]-- > 0 ? 5 : 1;
+        return Arrays.stream(group)
+            .map(mineral -> Math.max(mineral / pickPower, 1))
+            .sum();
     }
 }
