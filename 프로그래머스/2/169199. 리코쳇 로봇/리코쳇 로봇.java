@@ -1,6 +1,8 @@
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
+import java.util.Queue;
 
 class Solution {
 
@@ -12,7 +14,7 @@ class Solution {
             .map(String::toCharArray)
             .toArray(char[][]::new);
 
-        PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(x -> x[2]));
+        Queue<int[]> pq = new LinkedList<>();
 
         for (int row = 0; row < board.length; row++) {
             int col = board[row].indexOf("R");
@@ -29,9 +31,6 @@ class Solution {
             int col = cur[1];
             int moveCount = cur[2];
 
-            System.out.println(row + "," + col + "," + moveCount);
-
-
             for (int i = 0; i < 4; i++) {
                 int nextRow = row;
                 int nextCol = col;
@@ -39,7 +38,7 @@ class Solution {
                     nextRow += dx[i];
                     nextCol += dy[i];
                 }
-                
+
                 if (map[nextRow][nextCol] == 'G') {
                     return moveCount + 1;
                 }
