@@ -1,89 +1,107 @@
 import java.util.*;
 
-public class Main {
+class Main {
     static int N, M, D;
-    static int[][] originalMap;
+    static int[][] board;
     static int maxKill = 0;
-
+    
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         N = sc.nextInt();
         M = sc.nextInt();
         D = sc.nextInt();
-        originalMap = new int[N][M];
-
+        
+        board = new int[N][M];
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                originalMap[i][j] = sc.nextInt();
+                board[i][j] = sc.nextInt();
             }
         }
-
-        combination(new int[3], 0, 0);
+        
+        // 궁수 배치의 모든 조합을 구하기
+        List<int[]> combinations = new ArrayList<>();
+        for (int i = 0; i < M - 2; i++) {
+            for (int j = i + 1; j < M - 1; j++) {
+                for (int k = j + 1; k < M; k++) {
+                    combinations.add(new int[]{i, j, k});
+                }
+            }
+        }
+        
+        for (int[] archers : combinations) {
+            int killCount = simulate(archers);
+            maxKill = Math.max(maxKill, killCount);
+        }
+        
         System.out.println(maxKill);
     }
-
-    static void combination(int[] archers, int index, int start) {
-        if (index == 3) {
-            simulate(archers);
-            return;
-        }
-
-        for (int i = start; i < M; i++) {
-            archers[index] = i;
-            combination(archers, index + 1, i + 1);
-        }
-    }
-
-    static void simulate(int[] archers) {
-        int[][] map = new int[N][M];
+    
+    // 시뮬레이션 실행
+    static int simulate(int[] archers) {
+        int[][] tempBoard = new int[N][M];
         for (int i = 0; i < N; i++) {
-            map[i] = originalMap[i].clone();
+            tempBoard[i] = board[i].clone();  // 보드 복사
         }
-
-        int kill = 0;
+        
+        int killCount = 0;
         for (int turn = 0; turn < N; turn++) {
+            // 이번 턴에 궁수들이 공격할 적들을 찾는다.
             List<int[]> targets = new ArrayList<>();
+            
             for (int archer : archers) {
-                int[] target = findNearestEnemy(map, N, archer);
+                int[] target = findTarget(archer, tempBoard);
                 if (target != null) {
                     targets.add(target);
                 }
             }
-
+            
+            // 공격할 적들을 한 번에 제거
             for (int[] target : targets) {
-                if (map[target[0]][target[1]] == 1) {
-                    map[target[0]][target[1]] = 0;
-                    kill++;
+                if (tempBoard[target[0]][target[1]] == 1) {
+                    killCount++;
+                    tempBoard[target[0]][target[1]] = 0; // 적 제거
                 }
             }
-
-            moveEnemies(map);
+            
+            // 적 이동
+            moveEnemies(tempBoard);
         }
-
-        maxKill = Math.max(maxKill, kill);
+        
+        return killCount;
     }
-
-    static int[] findNearestEnemy(int[][] map, int archerRow, int archerCol) {
-        for (int d = 1; d <= D; d++) {
-            for (int y = 0; y < M; y++) {  // 왼쪽부터 검사
-                for (int x = N - 1; x >= 0; x--) {  // 아래에서 위로 검사
-                    if (calculateDistance(x, y, archerRow, archerCol) == d && map[x][y] == 1) {
-                        return new int[]{x, y};
+    
+    // 궁수가 공격할 적을 찾는 함수
+    static int[] findTarget(int archerCol, int[][] tempBoard) {
+        int minDist = D + 1;
+        int[] target = null;
+        
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (tempBoard[i][j] == 1) {  // 적이 있는 경우
+                    int dist = Math.abs(N - i) + Math.abs(archerCol - j);
+                    if (dist <= D) {
+                        if (dist < minDist || (dist == minDist && j < target[1])) {
+                            target = new int[]{i, j};
+                            minDist = dist;
+                        }
                     }
                 }
             }
         }
-        return null;
+        
+        return target;
     }
-
-    static int calculateDistance(int x1, int y1, int x2, int y2) {
-        return Math.abs(x1 - x2) + Math.abs(y1 - y2);
-    }
-
-    static void moveEnemies(int[][] map) {
+    
+    // 적을 한 칸 아래로 이동
+    static void moveEnemies(int[][] tempBoard) {
         for (int i = N - 1; i > 0; i--) {
-            System.arraycopy(map[i - 1], 0, map[i], 0, M);
+            for (int j = 0; j < M; j++) {
+                tempBoard[i][j] = tempBoard[i - 1][j];
+            }
         }
-        Arrays.fill(map[0], 0);
+        // 첫 번째 행은 모두 빈 칸으로 설정
+        for (int j = 0; j < M; j++) {
+            tempBoard[0][j] = 0;
+        }
     }
 }
