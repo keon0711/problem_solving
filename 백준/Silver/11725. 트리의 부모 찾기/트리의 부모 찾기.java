@@ -11,8 +11,11 @@ public class Main {
             int a = sc.nextInt();
             int b = sc.nextInt();
 
-            map.computeIfAbsent(a, k -> new ArrayList<>()).add(b);
-            map.computeIfAbsent(b, k -> new ArrayList<>()).add(a);
+            List<Integer> children1 = map.computeIfAbsent(a, k -> new ArrayList<>());
+            children1.add(b);
+
+            List<Integer> children2 = map.computeIfAbsent(b, k -> new ArrayList<>());
+            children2.add(a);
         }
 
         int[] parents = new int[n + 1];
