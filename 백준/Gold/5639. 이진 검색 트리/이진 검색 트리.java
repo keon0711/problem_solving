@@ -1,56 +1,28 @@
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-
     public static void main(String[] args) {
+        List<Integer> preorder = new ArrayList<>();
         Scanner sc = new Scanner(System.in);
 
-        int num = sc.nextInt();
-        Node root = new Node(num);
-
-        while (sc.hasNextInt()) {
-            Node node = new Node(sc.nextInt());
-            root.insert(node);
+        while(sc.hasNextInt()) {
+            preorder.add(sc.nextInt());
         }
 
-        root.postorder();
+        postorder(preorder, 0, preorder.size() - 1);
     }
 
-    static class Node {
+    static void postorder(List<Integer> preorder, int start, int end) {
+        if(start > end) return;
 
-        int value;
-        Node left;
-        Node right;
+        int root = preorder.get(start);
+        int idx = start + 1;
 
-        public Node(int value) {
-            this.value = value;
-        }
+        // 오른쪽 서브트리의 시작점 찾기
+        while(idx <= end && preorder.get(idx) < root) idx++;
 
-        public void insert(Node node) {
-            if (this.value > node.value) {
-                if (this.left == null) {
-                    this.left = node;
-                } else {
-                    this.left.insert(node);
-                }
-            } else {
-                if (this.right == null) {
-                    this.right = node;
-                } else {
-                    this.right.insert(node);
-                }
-            }
-        }
-
-        public void postorder() {
-            if (left != null) {
-                left.postorder();
-            }
-            if (right != null) {
-                right.postorder();
-            }
-            System.out.println(value);
-        }
+        postorder(preorder, start + 1, idx - 1);  // 왼쪽 서브트리
+        postorder(preorder, idx, end);            // 오른쪽 서브트리
+        System.out.println(root);
     }
-
 }
