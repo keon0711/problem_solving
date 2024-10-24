@@ -7,6 +7,7 @@ public class Main {
     private static int N;
     private static int M;
     private static int K;
+    private static int firstTruthPerson;
 
     public static void main(String[] args) {
         sc = new Scanner(System.in);
@@ -61,7 +62,7 @@ public class Main {
 
     private static void findKnowers(Set<Integer> knowers) {
         if (K > 0) {
-            int firstTruthPerson = sc.nextInt();
+            firstTruthPerson = sc.nextInt();
             knowers.add(firstTruthPerson);
 
             for (int i = 1; i < K; i++) {
@@ -74,10 +75,8 @@ public class Main {
 
     private static boolean truthParty(List<Integer> party, Set<Integer> knowers) {
         for (int person : party) {
-            for (int knower : knowers) {
-                if (find(person) == find(knower)) {
-                    return true;
-                }
+            if (find(person) == find(firstTruthPerson)) {
+                return true;
             }
         }
         return false;
