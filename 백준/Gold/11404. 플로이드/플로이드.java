@@ -1,11 +1,10 @@
 import static java.lang.Integer.MAX_VALUE;
 
-import java.util.*;
-import java.util.stream.IntStream;
+import java.util.Scanner;
 
 public class Main {
 
-    static final int INF = 100_000_000;
+    static final int INF = MAX_VALUE;
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
