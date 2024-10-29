@@ -1,10 +1,9 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main {
-
     private static int N, M;
     private static int[] numbers;
+    private static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -16,24 +15,21 @@ public class Main {
         }
         Arrays.sort(numbers);
         permutation(new ArrayList<>());
+        System.out.print(sb);
     }
 
     private static void permutation(List<Integer> result) {
         if (result.size() == M) {
-            System.out.println(result.stream().map(String::valueOf).collect(Collectors.joining(" ")));
+            result.forEach(num -> sb.append(num).append(" "));
+            sb.append("\n");
             return;
         }
 
         for (int number : numbers) {
-            if (result.contains(number)) {
-                continue;
-            }
+            if (result.contains(number)) continue;
             result.add(number);
             permutation(result);
             result.remove(result.size() - 1);
         }
     }
-
-
 }
-
