@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
@@ -15,21 +16,24 @@ public class Main {
 
         // 두 번째 수열 입력
         int m = scanner.nextInt();
+        HashSet<Integer> setB = new HashSet<>();
         List<Integer> b = new ArrayList<>();
         for (int i = 0; i < m; i++) {
-            b.add(scanner.nextInt());
+            int num = scanner.nextInt();
+            b.add(num);
+            setB.add(num); // 두 번째 수열의 요소를 Set에 저장
         }
 
         List<Integer> answer = new ArrayList<>();
 
-        // 최대값부터 탐색하여 공통 부분 수열을 찾음
+        // 큰 값부터 탐색하면서 공통 부분 수열 찾기
         for (int i = 100; i >= 1; i--) {
-            while (a.contains(i) && b.contains(i)) {
+            while (a.contains(i) && setB.contains(i)) {
                 answer.add(i);
-                
-                // 해당 요소 이후의 부분 수열로 업데이트
                 a = a.subList(a.indexOf(i) + 1, a.size());
-                b = b.subList(b.indexOf(i) + 1, b.size());
+                int idx = b.indexOf(i);
+                b = b.subList(idx + 1, b.size());
+                setB = new HashSet<>(b); // b의 남은 부분으로 Set 재구성
             }
         }
 
