@@ -2,34 +2,38 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        
-        int[] numbers = new int[N];
-        int maxNum = 0;
-        int[] index = new int[1000001];  // 각 숫자의 인덱스를 저장
-        
-        for(int i = 0; i < N; i++) {
-            numbers[i] = sc.nextInt();
-            maxNum = Math.max(maxNum, numbers[i]);
-            index[numbers[i]] = i + 1;    // 1-based index 저장
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
+        int[] cards = new int[n];
+        int maxCard = 0;
+
+        for (int i = 0; i < n; i++) {
+            cards[i] = scanner.nextInt();
+            if (cards[i] > maxCard) {
+                maxCard = cards[i];
+            }
         }
-        
-        int[] score = new int[N];
-        
-        for(int i = 0; i < N; i++) {
-            int current = numbers[i];
-            // current의 배수들을 확인
-            for(int j = current * 2; j <= maxNum; j += current) {
-                if(index[j] > 0) {        // 해당 숫자가 존재하면
-                    score[i]++;           // current는 점수 획득
-                    score[index[j]-1]--;  // j는 점수 감소
+
+        int[] scores = new int[maxCard + 1];
+        boolean[] hasCard = new boolean[maxCard + 1];
+
+        for (int card : cards) {
+            hasCard[card] = true;
+        }
+
+        for (int card : cards) {
+            for (int multiple = card * 2; multiple <= maxCard; multiple += card) {
+                if (hasCard[multiple]) {
+                    scores[card]++;
+                    scores[multiple]--;
                 }
             }
         }
-        
-        for(int i = 0; i < N; i++) {
-            System.out.print(score[i] + " ");
+
+        StringBuilder result = new StringBuilder();
+        for (int card : cards) {
+            result.append(scores[card]).append(" ");
         }
+        System.out.println(result.toString().trim());
     }
 }
