@@ -1,56 +1,55 @@
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
+    static int N, M;
+    static int[] numbers;
+    static int[] sequence;
+    static boolean[] visited;
+    static StringBuilder sb = new StringBuilder();
 
-    private static int N;
-    private static int M;
-    private static Set<List<Integer>> set = new HashSet<>();
-    private static StringBuilder sb = new StringBuilder();
-    private static int[] arr;
-    private static boolean[] visited;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        N = sc.nextInt();
-        M = sc.nextInt();
-        arr = new int[N];
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+
+        numbers = new int[N];
+        sequence = new int[M];
         visited = new boolean[N];
 
+        st = new StringTokenizer(br.readLine());
         for (int i = 0; i < N; i++) {
-            arr[i] = sc.nextInt();
+            numbers[i] = Integer.parseInt(st.nextToken());
         }
-        Arrays.sort(arr);
 
-        permute(new ArrayList<>());
-
-
-        System.out.println(sb.toString());
+        Arrays.sort(numbers);
+        backtrack(0);
+        System.out.print(sb.toString());
     }
 
-    private static void permute(List<Integer> current) {
-        if (current.size() == M) {
-            if (set.contains(current)) {
-                return;
+    public static void backtrack(int depth) {
+        if (depth == M) {
+            for (int i = 0; i < M; i++) {
+                sb.append(sequence[i]).append(' ');
             }
-            set.add(new ArrayList<>(current));
-            for (int i : current) {
-                sb.append(i).append(" ");
-            }
-            sb.append("\n");
+            sb.append('\n');
             return;
         }
 
-        for (int i = 0; i < N; i++ ) {
-            if (visited[i]) {
-                continue;
+        int last = 0;
+        for (int i = 0; i < N; i++) {
+            if (!visited[i] && numbers[i] != last) {
+                visited[i] = true;
+                sequence[depth] = numbers[i];
+                last = numbers[i];
+                backtrack(depth + 1);
+                visited[i] = false;
             }
-
-            visited[i] = true;
-            current.add(arr[i]);
-            permute(current);
-            current.remove(current.size() - 1);
-            visited[i] = false;
         }
-
     }
 }
