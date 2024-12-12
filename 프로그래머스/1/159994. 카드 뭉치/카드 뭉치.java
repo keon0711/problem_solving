@@ -2,24 +2,18 @@ import java.util.List;
 
 class Solution {
     public String solution(String[] cards1, String[] cards2, String[] goal) {
-        int i = 0;
-        int j = 0;
-        int k = 0;
+        int index1 = 0, index2 = 0;
 
-        while (k != goal.length) {
-            
-            if (i < cards1.length && cards1[i].equals(goal[k])) {
-                i++;
-                k++;
-                continue;
+        for (String word : goal) {
+            if (index1 < cards1.length && cards1[index1].equals(word)) {
+                index1++;
+            } else if (index2 < cards2.length && cards2[index2].equals(word)) {
+                index2++;
+            } else {
+                return "No";
             }
-            if (j < cards2.length && cards2[j].equals(goal[k])) {
-                j++;
-                k++;
-                continue;
-            }
-            return "No";
         }
+
         return "Yes";
     }
 }
