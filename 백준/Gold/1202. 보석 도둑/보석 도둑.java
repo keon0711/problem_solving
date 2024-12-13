@@ -7,7 +7,7 @@ public class Main {
         int N = sc.nextInt(); // 보석의 개수
         int K = sc.nextInt(); // 가방의 개수
 
-        LinkedList<Jewel> jewels = new LinkedList<>();
+        List<Jewel> jewels = new LinkedList<>();
         for (int i = 0; i < N; i++) {
             int weight = sc.nextInt();
             int value = sc.nextInt();
@@ -27,8 +27,8 @@ public class Main {
         long maxTotalValue = 0;
 
         for (int bag : bags) {
-            while (!jewels.isEmpty() && jewels.getFirst().weight <= bag) {
-                pq.offer(jewels.pollFirst().value); // 첫 번째 보석을 꺼내 큐에 추가
+            while (!jewels.isEmpty() && jewels.get(0).weight <= bag) {
+                pq.offer(jewels.remove(0).value); // 첫 번째 보석을 꺼내 큐에 추가
             }
             if (!pq.isEmpty()) {
                 maxTotalValue += pq.poll();
