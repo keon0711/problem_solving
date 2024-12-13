@@ -7,11 +7,11 @@ public class Main {
         int N = sc.nextInt(); // 보석의 개수
         int K = sc.nextInt(); // 가방의 개수
 
-        Jewel[] jewels = new Jewel[N];
+        LinkedList<Jewel> jewels = new LinkedList<>();
         for (int i = 0; i < N; i++) {
             int weight = sc.nextInt();
             int value = sc.nextInt();
-            jewels[i] = new Jewel(weight, value);
+            jewels.add(new Jewel(weight, value));
         }
 
         int[] bags = new int[K];
@@ -20,17 +20,15 @@ public class Main {
         }
 
         // 보석과 가방 정렬
-        Arrays.sort(jewels, Comparator.comparingInt(j -> j.weight));
+        jewels.sort(Comparator.comparingInt(j -> j.weight));
         Arrays.sort(bags);
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Comparator.reverseOrder());
         long maxTotalValue = 0;
-        int jewelIndex = 0;
 
         for (int bag : bags) {
-            while (jewelIndex < N && jewels[jewelIndex].weight <= bag) {
-                pq.offer(jewels[jewelIndex].value);
-                jewelIndex++;
+            while (!jewels.isEmpty() && jewels.getFirst().weight <= bag) {
+                pq.offer(jewels.pollFirst().value); // 첫 번째 보석을 꺼내 큐에 추가
             }
             if (!pq.isEmpty()) {
                 maxTotalValue += pq.poll();
